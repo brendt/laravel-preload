@@ -10,15 +10,13 @@ class Preloader
 
     private array $paths;
 
-    private array $classMap;
-
     private array $fileMap;
 
     public function __construct(string ...$paths)
     {
         $this->paths = $paths;
-        $this->classMap = require __DIR__ . '/vendor/composer/autoload_classmap.php';
-        $this->fileMap = array_flip($this->classMap);
+        $classMap = require __DIR__ . '/vendor/composer/autoload_classmap.php';
+        $this->fileMap = array_flip($classMap);
     }
 
     public function paths(string ...$paths): Preloader
@@ -44,9 +42,7 @@ class Preloader
     public function load(): void
     {
         foreach ($this->paths as $path) {
-            $path = rtrim($path, '/');
-
-            $this->loadPath($path);
+            $this->loadPath(rtrim($path, '/'));
         }
 
         $count = self::$count;
@@ -59,10 +55,6 @@ class Preloader
         if (is_dir($path)) {
             $this->loadDir($path);
 
-            return;
-        }
-
-        if (substr($path, -4) !== '.php') {
             return;
         }
 
