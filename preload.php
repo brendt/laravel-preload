@@ -88,10 +88,6 @@ class Preloader
     {
         $class = $this->fileMap[$path] ?? null;
 
-        if ($class === null) {
-            return;
-        }
-
         if ($this->shouldIgnore($class)) {
             return;
         }
@@ -103,8 +99,12 @@ class Preloader
         echo "[Preloader] Class successfully preloaded: {$class}" . PHP_EOL;
     }
 
-    private function shouldIgnore(string $name): bool
+    private function shouldIgnore(?string $name): bool
     {
+        if ($name === null) {
+            return true;
+        }
+
         foreach ($this->ignores as $ignore) {
             if (strpos($name, $ignore) === 0) {
                 return true;
