@@ -70,7 +70,7 @@ class Preloader
                 continue;
             }
 
-            $this->loadPath($path . "/" . $file);
+            $this->loadPath("{$path}/{$file}");
         }
 
         closedir($handle);
