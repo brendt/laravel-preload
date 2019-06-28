@@ -9,4 +9,5 @@ git clone git@github.com:brendt/laravel-preload.git
 composer install
 ```
 
-Configure `opcache.preload` in your PHP's ini file to [`preload.php`](./preload.php).
+Configure `opcache.preload` in your PHP's ini file to [`preload.php`](./preload.php), 
+and restart php-fpm or whatever server you're using.
