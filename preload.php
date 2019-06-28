@@ -92,12 +92,7 @@ class Preloader
             return;
         }
 
-        if (
-            interface_exists($class, false)
-            || class_exists($class, false)
-            || trait_exists($class, false)
-            || $this->shouldIgnore($class)
-        ) {
+        if ($this->shouldIgnore($class)) {
             return;
         }
 
