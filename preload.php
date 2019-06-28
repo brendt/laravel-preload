@@ -44,6 +44,8 @@ class Preloader
     public function load(): void
     {
         foreach ($this->paths as $path) {
+            $path = rtrim($path, '/');
+
             $this->loadPath($path);
         }
 
