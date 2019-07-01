@@ -10,13 +10,14 @@ class Preloader
 
     private array $paths;
 
-    private array $fileMap;
+    private array $classMap;
+
+    private array $loadedFiles = [];
 
     public function __construct(string ...$paths)
     {
         $this->paths = $paths;
-        $classMap = require __DIR__ . '/vendor/composer/autoload_classmap.php';
-        $this->fileMap = array_flip($classMap);
+        $this->classMap = require __DIR__ . '/vendor/composer/autoload_classmap.php';
     }
 
     public function paths(string ...$paths): Preloader
@@ -43,11 +44,16 @@ class Preloader
     {
         foreach ($this->paths as $path) {
             $this->loadPath(rtrim($path, '/'));
+
+            set_include_path(get_include_path() . PATH_SEPARATOR . realpath($path));
         }
 
         $count = self::$count;
 
         echo "[Preloader] Successfully preloaded {$count} classes" . PHP_EOL;
+
+        echo get_include_path() . PHP_EOL;
+
     }
 
     private function loadPath(string $path): void
@@ -76,29 +82,49 @@ class Preloader
         closedir($handle);
     }
 
-    private function loadClass(string $path): void
+    private function loadClass(string $name): void
     {
-        $class = $this->fileMap[$path] ?? null;
+        $path = $this->classMap[$name] ?? $name;
 
-        if ($this->shouldIgnore($class)) {
+        if ($this->shouldIgnore($path)) {
             return;
         }
 
-        require_once($path);
+        $classContents = file_get_contents($path);
+
+        preg_match_all('/use ([\w\\\\]+)/', $classContents, $uses);
+
+        $uses = $uses[1] ?? [];
+
+        $this->loadedFiles[$path] = true;
+
+        foreach ($uses as $use) {
+            $this->loadClass($use);
+        }
+
+        opcache_compile_file($path);
 
         self::$count++;
 
-        echo "[Preloader] Class successfully preloaded: {$class}" . PHP_EOL;
+        echo "[Preloader] Class successfully preloaded: {$path}" . PHP_EOL;
     }
 
-    private function shouldIgnore(?string $name): bool
+    private function shouldIgnore(?string $path): bool
     {
-        if ($name === null) {
+        if ($path === null) {
+            return true;
+        }
+
+        if (isset($this->loadedFiles[$path])) {
+            return true;
+        }
+
+        if (substr($path, -4) !== '.php') {
             return true;
         }
 
         foreach ($this->ignores as $ignore) {
-            if (strpos($name, $ignore) === 0) {
+            if (strpos($path, $ignore) === 0) {
                 return true;
             }
         }
@@ -109,6 +135,5 @@ class Preloader
 
 (new Preloader())
     ->paths(__DIR__ . '/vendor/laravel')
-    ->ignore(\Illuminate\Filesystem\Cache::class)
     ->load();
 
