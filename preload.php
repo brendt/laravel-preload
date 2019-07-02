@@ -4,7 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Preloader
 {
-    protected array $ignores = [];
+    private array $ignores = [];
 
     private static int $count = 0;
 
@@ -42,6 +42,7 @@ class Preloader
     public function load(): void
     {
         foreach ($this->paths as $path) {
+
             $this->loadPath(rtrim($path, '/'));
         }
 
@@ -84,7 +85,8 @@ class Preloader
             return;
         }
 
-        require_once($path);
+        opcache_compile_file($path);
+//        require_once($path);
 
         self::$count++;
 
@@ -107,6 +109,7 @@ class Preloader
     }
 }
 
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath($path));
 (new Preloader())
     ->paths(__DIR__ . '/vendor/laravel')
     ->ignore(
