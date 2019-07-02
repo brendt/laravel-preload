@@ -87,6 +87,7 @@ class Preloader
 
         opcache_compile_file($path);
 //        require_once($path);
+//        include_once($path);
 
         self::$count++;
 
