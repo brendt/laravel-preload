@@ -109,7 +109,8 @@ class Preloader
     }
 }
 
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath($path));
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath(__DIR__ . '/vendor/laravel'));
+
 (new Preloader())
     ->paths(__DIR__ . '/vendor/laravel')
     ->ignore(
