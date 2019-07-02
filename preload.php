@@ -85,9 +85,26 @@ class Preloader
             return;
         }
 
+        /*
+         * opcache_compile_file won't resolve linked classes
+         */
         opcache_compile_file($path);
+
+        /*
+         * require_once and _include_once don't seem to actually preload the files
+         */
 //        require_once($path);
 //        include_once($path);
+
+        /*
+         * neither do require or include
+         */
+//        if (class_exists($class, false) || trait_exists($class, false) || interface_exists($class, false)) {
+//            return;
+//        }
+//
+//        require($path);
+//        include($path);
 
         self::$count++;
 
