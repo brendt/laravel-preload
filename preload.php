@@ -48,7 +48,7 @@ class Preloader
 
         $count = self::$count;
 
-        echo "[Preloader] Successfully preloaded {$count} classes" . PHP_EOL;
+        echo "[Preloader] Preloaded {$count} classes" . PHP_EOL;
     }
 
     private function loadPath(string $path): void
@@ -89,7 +89,7 @@ class Preloader
 
         self::$count++;
 
-        echo "[Preloader] Class successfully preloaded: {$class}" . PHP_EOL;
+        echo "[Preloader] Preloaded `{$class}`" . PHP_EOL;
     }
 
     private function shouldIgnore(?string $name): bool
@@ -107,8 +107,6 @@ class Preloader
         return false;
     }
 }
-
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath(__DIR__ . '/vendor/laravel'));
 
 (new Preloader())
     ->paths(__DIR__ . '/vendor/laravel')

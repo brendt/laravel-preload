@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    dd(opcache_get_status());
+    dd(opcache_get_status()['preload_statistics']);
 
     return view('welcome');
 });
