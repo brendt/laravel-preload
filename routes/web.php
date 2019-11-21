@@ -12,11 +12,7 @@
 */
 
 Route::get('/', function () {
-    dd(
-        collect(opcache_get_status()['scripts'])
-            ->reject(fn ($item) => $item['hits'] === 0)
-            ->sortByDesc('hits')
-    );
+    dd(opcache_get_status());
 
     return view('welcome');
 });
