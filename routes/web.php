@@ -12,7 +12,14 @@
 */
 
 Route::get('/', function () {
-    dd(opcache_get_status()['preload_statistics']);
+    $preloadStats = opcache_get_status()['preload_statistics'];
 
-    return view('welcome');
+    $memory = $preloadStats['memory_consumption'];
+
+    $base = log($memory, 1024);
+    $suffixes = array('', 'KB', 'MB', 'G', 'T');
+
+    $preloadStats['memory'] = round(pow(1024, $base - floor($base)), 2) .' '. $suffixes[floor($base)];
+
+    return view('welcome', ['preloadStats' => $preloadStats]);
 });
