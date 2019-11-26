@@ -42,7 +42,6 @@ class Preloader
     public function load(): void
     {
         foreach ($this->paths as $path) {
-
             $this->loadPath(rtrim($path, '/'));
         }
 
@@ -59,7 +58,7 @@ class Preloader
             return;
         }
 
-        $this->loadClass($path);
+        $this->loadFile($path);
     }
 
     private function loadDir(string $path): void
@@ -77,7 +76,7 @@ class Preloader
         closedir($handle);
     }
 
-    private function loadClass(string $path): void
+    private function loadFile(string $path): void
     {
         $class = $this->fileMap[$path] ?? null;
 
